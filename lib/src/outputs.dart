@@ -6,5 +6,5 @@ Future<void> setOutput(
 ) async {
   ArgumentError.checkNotNull(name);
   ArgumentError.checkNotNull(value);
-  await runCommand('echo', ['::set-output name=$name::$value']);
+  await exec('echo', ['::set-output name=$name::$value']);
 }
