@@ -1,4 +1,3 @@
-A library for Dart developers.
+# github_actions_toolkit
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+A third-party toolkit for [GitHub Actions](https://help.github.com/en/actions) coded in Dart.
