@@ -1,6 +1,6 @@
 name: github_actions_toolkit
 description: Utilities for GitHub Actions coded in Dart.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/axel-op/dart-github-action
 
 environment:

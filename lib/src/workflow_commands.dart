@@ -1,13 +1,17 @@
 import 'dart:io';
 
-/// Creates or updates an environment variable for any actions running next in a job.
-/// 
-/// The action that creates or updates the environment variable does not have access to the new value,
-/// but all subsequent actions in a job will have access.
-/// 
+/// Creates or updates an environment variable
+/// for this action AND any actions running next in a job.
+///
 /// Environment variables are case-sensitive and you can include punctuation.
+void exportVariable(String name, String value) {
+  _echo('set-env', value, {'name': name});
+  Platform.environment[name] = value;
+}
+
+/// Alias for [exportVariable]
 void setEnvironmentVariable(String name, String value) =>
-    _echo('set-env', value, {'name': name});
+    exportVariable(name, value);
 
 /// Sets an action's output parameter.
 ///
@@ -17,9 +21,13 @@ void setEnvironmentVariable(String name, String value) =>
 void setOutput(String name, String value) =>
     _echo('set-output', value, {'name': name});
 
-/// Prepends a directory to the system `PATH` variable for all subsequent actions in the current job.
-/// The currently running action cannot access the new path variable.
-void addPath(String path) => _echo('add-path', path);
+/// Prepends a directory to the system `PATH` variable
+/// for this action AND all subsequent actions in the current job.
+void addPath(String path) {
+  _echo('add-path', path);
+  final currentPath = Platform.environment['PATH'] ?? '';
+  Platform.environment['PATH'] = '$path${Platform.pathSeparator}$currentPath';
+}
 
 /// Creates an error message and prints the message to the log.
 ///
@@ -58,10 +66,16 @@ void setDebugMessage(
 }) =>
     _echo('debug', message, _params(file, line, column));
 
-Map<String, String> _params(String file, String line, String column) =>
-    [file, line, column].any((e) => e != null)
-        ? {'file': file, 'line': line, 'col': column}
-        : null;
+Map<String, String> _params(String file, String line, String column) {
+  final map = <String, String>{};
+  if (file != null) map['file'] = file;
+  if (line != null) map['line'] = line;
+  if (column != null) map['col'] = column;
+  return map;
+}
+
+/// True iff the secret `ACTIONS_STEP_DEBUG` is set with the value `true`
+bool get isDebug => Platform.environment['RUNNER_DEBUG'] == '1';
 
 /// Masking a value prevents a string or variable from being printed in the log.
 ///
@@ -69,26 +83,32 @@ Map<String, String> _params(String file, String line, String column) =>
 /// You can use an environment variable or string for the mask's [value].
 void maskValueInLog(String value) => _echo('add-mask', value);
 
+/// Alias for [maskValueInLog]
+void setSecret(String value) => maskValueInLog(value);
+
 /// You can use this command to create environment variables
 /// for sharing with your workflow's `pre:` or `post:` actions.
-/// 
+///
 /// For example, you can create a file with the `pre:` action,
 /// pass the file location to the `main:` action,
 /// and then use the `post:` action to delete the file.
 /// Alternatively, you could create a file with the `main:` action,
 /// pass the file location to the `post:` action,
 /// and also use the `post:` action to delete the file.
-/// 
+///
 /// If you have multiple `pre:` or `post:` actions,
 /// you can only access the saved [value] in the action where save-state was used.
-/// 
+///
 /// For more information on the `post:` action,
 /// see "[Metadata syntax for GitHub Actions.](https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#post)".
-/// 
+///
 /// The saved [value] is not available to YAML files.
 /// It is stored as an environment value with the `STATE_` prefix.
-void saveState(String name, String value)
-=> _echo('save-state', value, {'name': name});
+void saveState(String name, String value) =>
+    _echo('save-state', value, {'name': name});
+
+/// Gets the value of a state set using [saveState]
+String getState(String name) => Platform.environment['STATE_$name'];
 
 void startGroup(String name) => _echo('group', name);
 void endGroup() => _echo('endgroup');
@@ -106,11 +126,9 @@ Future<T> group<T>(String name, Future<T> Function() function) async {
 
 void _echo(String command, [String message, Map<String, String> parameters]) {
   final sb = StringBuffer('::$command');
-  if (parameters != null) {
-    final params =
-        parameters.entries.map((e) => '${e.key}=${e.value}').join(',');
-    if (params.isNotEmpty) sb.write(' $params');
-  }
+  final params =
+      parameters?.entries?.map((e) => '${e.key}=${e.value}')?.join(',');
+  if (params != null && params.isNotEmpty) sb.write(' $params');
   sb.write('::');
   if (message != null) sb.write(message);
   stdout.writeln(sb.toString());
