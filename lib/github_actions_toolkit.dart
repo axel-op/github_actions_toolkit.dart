@@ -1,5 +1,5 @@
 /// More dartdocs go here.
-library dart_github_action;
+library github_actions_toolkit;
 
 export 'src/inputs.dart';
 export 'src/processes.dart';
