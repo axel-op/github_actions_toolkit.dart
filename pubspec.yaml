@@ -1,7 +1,7 @@
-name: dart_github_action
-description: A starting point for Dart libraries or applications.
-# version: 1.0.0
-# homepage: https://www.example.com
+name: github_actions_toolkit
+description: Utilities for GitHub Actions coded in Dart.
+version: 0.0.1
+repository: https://github.com/axel-op/dart-github-action
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
