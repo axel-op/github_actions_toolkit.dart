@@ -15,6 +15,13 @@ class ExecResult {
   });
 }
 
+final _streamsToFree = <Future<dynamic>>[];
+
+Future<void> _freeStreams() async {
+  await Future.wait<dynamic>(_streamsToFree);
+  _streamsToFree.clear();
+}
+
 /// Runs a command in a shell.
 /// Returns a [ExecResult] once the process has terminated.
 /// **MUST be awaited.**
@@ -34,9 +41,8 @@ Future<ExecResult> exec(
   bool silent = false,
   Map<String, String> environment,
 }) async {
-  final streamsToFree = <Future<dynamic>>[];
-  final freeStreams = () async => Future.wait<dynamic>(streamsToFree);
   try {
+    await _freeStreams();
     final process = await Process.start(
       executable,
       arguments,
@@ -47,21 +53,21 @@ Future<ExecResult> exec(
     final errStream = process.stderr.asBroadcastStream();
     final outStream = process.stdout.asBroadcastStream();
     if (!silent) {
-      streamsToFree
+      _streamsToFree
         ..add(stderr.addStream(errStream))
         ..add(stdout.addStream(outStream));
     }
     final outputStderr = errStream.transform(utf8.decoder).toList();
     final outputStdout = outStream.transform(utf8.decoder).toList();
     final exitCode = await process.exitCode;
-    await freeStreams();
+    await _freeStreams();
     return ExecResult._(
       exitCode: exitCode,
       stdout: (await outputStdout)?.join(),
       stderr: (await outputStderr)?.join(),
     );
   } catch (e) {
-    await freeStreams();
+    await _freeStreams();
     rethrow;
   }
 }
