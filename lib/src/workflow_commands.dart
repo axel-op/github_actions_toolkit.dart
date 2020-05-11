@@ -1,5 +1,80 @@
 import 'dart:io';
 
+const log = _Log._();
+
+class _Log {
+  const _Log._();
+
+  Map<String, String> _params(String file, String line, String column) {
+    final map = <String, String>{};
+    if (file != null) map['file'] = file;
+    if (line != null) map['line'] = line;
+    if (column != null) map['col'] = column;
+    return map;
+  }
+
+  void _log(
+    String command,
+    String message,
+    String file,
+    String line,
+    String column,
+  ) =>
+      _echo(command, message, _params(file, line, column));
+
+  void info(String message) => stdout.writeln(message);
+
+  /// Creates an error message and prints the message to the log.
+  ///
+  /// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
+  void error(
+    String message, {
+    String file,
+    String line,
+    String column,
+  }) =>
+      _log('error', message, file, line, column);
+
+  /// Creates a warning message and prints the message to the log.
+  ///
+  /// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
+  void warning(
+    String message, {
+    String file,
+    String line,
+    String column,
+  }) =>
+      _log('warning', message, file, line, column);
+
+  /// Prints a debug message to the log.
+  ///
+  /// You must create a secret named `ACTIONS_STEP_DEBUG` with the value `true`
+  /// to see the debug messages set by this command in the log.
+  /// To learn more about creating secrets and using them in a step,
+  /// see "[Creating and using encrypted secrets.](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)"
+  void debug(
+    String message, {
+    String file,
+    String line,
+    String column,
+  }) =>
+      _log('debug', message, file, line, column);
+
+  void startGroup(String name) => _echo('group', name);
+  void endGroup() => _echo('endgroup');
+
+  Future<T> group<T>(String name, Future<T> Function() function) async {
+    startGroup(name);
+    T result;
+    try {
+      result = await function();
+    } finally {
+      endGroup();
+    }
+    return result;
+  }
+}
+
 /// Creates or updates an environment variable
 /// for this action AND any actions running next in a job.
 ///
@@ -27,51 +102,6 @@ void addPath(String path) {
   _echo('add-path', path);
   final currentPath = Platform.environment['PATH'] ?? '';
   Platform.environment['PATH'] = '$path${Platform.pathSeparator}$currentPath';
-}
-
-/// Creates an error message and prints the message to the log.
-///
-/// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
-void setErrorMessage(
-  String message, {
-  String file,
-  String line,
-  String column,
-}) =>
-    _echo('error', message, _params(file, line, column));
-
-/// Creates a warning message and prints the message to the log.
-///
-/// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
-void setWarningMessage(
-  String message, {
-  String file,
-  String line,
-  String column,
-}) {
-  _echo('warning', message, _params(file, line, column));
-}
-
-/// Prints a debug message to the log.
-///
-/// You must create a secret named `ACTIONS_STEP_DEBUG` with the value `true`
-/// to see the debug messages set by this command in the log.
-/// To learn more about creating secrets and using them in a step,
-/// see "[Creating and using encrypted secrets.](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)"
-void setDebugMessage(
-  String message, {
-  String file,
-  String line,
-  String column,
-}) =>
-    _echo('debug', message, _params(file, line, column));
-
-Map<String, String> _params(String file, String line, String column) {
-  final map = <String, String>{};
-  if (file != null) map['file'] = file;
-  if (line != null) map['line'] = line;
-  if (column != null) map['col'] = column;
-  return map;
 }
 
 /// True iff the secret `ACTIONS_STEP_DEBUG` is set with the value `true`
@@ -109,20 +139,6 @@ void saveState(String name, String value) =>
 
 /// Gets the value of a state set using [saveState]
 String getState(String name) => Platform.environment['STATE_$name'];
-
-void startGroup(String name) => _echo('group', name);
-void endGroup() => _echo('endgroup');
-
-Future<T> group<T>(String name, Future<T> Function() function) async {
-  startGroup(name);
-  T result;
-  try {
-    result = await function();
-  } finally {
-    endGroup();
-  }
-  return result;
-}
 
 void _echo(String command, [String message, Map<String, String> parameters]) {
   final sb = StringBuffer('::$command');
