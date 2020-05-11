@@ -1,9 +1,11 @@
 import 'dart:io';
 
-const env = _Env._();
+const env = Env._();
 
-class _Env {
-  const _Env._();
+/// Getters to access properties of the default environment
+/// set by GitHub
+class Env {
+  const Env._();
 
   String _env(String variable) => Platform.environment[variable];
 

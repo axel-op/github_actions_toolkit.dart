@@ -1,9 +1,10 @@
 import 'dart:io';
 
-const log = _Log._();
+const log = Log._();
 
-class _Log {
-  const _Log._();
+/// Logging commands
+class Log {
+  const Log._();
 
   Map<String, String> _params(String file, String line, String column) {
     final map = <String, String>{};
