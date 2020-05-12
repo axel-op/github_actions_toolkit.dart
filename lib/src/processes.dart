@@ -29,6 +29,10 @@ final _queuedProcesses = Queue();
 /// Runs a command in a shell.
 /// Returns a [ExecResult] once the process has terminated.
 ///
+/// Processes executed by this command are queued,
+/// and they cannot run in parallel (to preserve consistence in logs).
+/// A process will not start until the previous ones have terminated.
+///
 /// By default, the outputs will be printed on the console.
 /// If [silent] is true, nothing will be printed
 /// but the outputs will still be available in [ExecResult].

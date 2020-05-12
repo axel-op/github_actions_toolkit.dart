@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+/// Objects that represent an input of the action.
 class Input {
+  /// The name of the input,
+  /// as written in the YAML file.
   final String name;
   final bool isRequired;
 
