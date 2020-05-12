@@ -46,15 +46,6 @@ void main() async {
 
   // Subprocesses
 
-  logger.startGroup('Echo test');
-  final message = 'This is an echo test';
-  final echoTest = gaction.exec('echo', [message]);
-  logger.endGroup();
-
-  if (!echoTest.stdout.startsWith(message)) {
-    throw AssertionError('Echo test failed');
-  }
-
   final analyzerResult = await logger.group(
     'Executing dartanalyzer',
     () async => gaction.exec(

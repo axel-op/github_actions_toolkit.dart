@@ -2,7 +2,7 @@
 
 ## 0.0.3
 
-- The `exec` function now runs synchronously.
+- The `exec` function can now be unawaited.
 
 ## 0.0.2
 

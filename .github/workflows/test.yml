@@ -10,6 +10,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: ./example
-        with:
-          who-to-greet: "you"
+      - name: Run test app
+        id: dart-app
+        uses: ./test
+      - name: Test outputs
+        run: |
+          if [ -z "${{ steps.dart-app.outputs.time }}" ]
+          then
+            exit 1
+          fi

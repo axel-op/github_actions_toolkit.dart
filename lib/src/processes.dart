@@ -1,8 +1,8 @@
-import 'dart:cli';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
+import 'package:queue/queue.dart';
 
 extension<K, V> on Map<K, V> {
   Map<K, V> unmodifiableCopy() => Map<K, V>.unmodifiable(this);
@@ -24,6 +24,8 @@ class ExecResult {
   });
 }
 
+final _queuedProcesses = Queue();
+
 /// Runs a command in a shell.
 /// Returns a [ExecResult] once the process has terminated.
 ///
@@ -36,20 +38,23 @@ class ExecResult {
 /// Currently, only US-ASCII environment variables are supported
 /// and errors are likely to occur if an environment variable with code-points
 /// outside the US-ASCII range is passed in.
-ExecResult exec(
+Future<ExecResult> exec(
   String executable,
   List<String> arguments, {
   String workDir,
   bool silent = false,
   Map<String, String> environment,
-}) {
-  return waitFor<ExecResult>(_exec(
-    executable,
-    arguments.unmodifiableCopy(),
-    workDir,
-    silent ?? false,
-    environment?.unmodifiableCopy(),
-  ));
+}) async {
+  final result = await _queuedProcesses.add(
+    () => _exec(
+      executable,
+      arguments.unmodifiableCopy(),
+      workDir,
+      silent ?? false,
+      environment?.unmodifiableCopy(),
+    ),
+  );
+  return result as ExecResult;
 }
 
 Future<ExecResult> _exec(
