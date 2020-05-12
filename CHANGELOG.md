@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+- The `exec` function now runs synchronously.
+
 ## 0.0.2
 
 - Newly created environment variables and paths are accessible to the running action.

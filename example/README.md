@@ -65,8 +65,7 @@ Execute a command in the shell with the `exec` function. It will return an `Exec
 import 'package:github_actions_toolkit/github_actions_toolkit.dart' as gaction;
 
 main() async {
-  // The [exec] function MUST always be awaited
-  final process = await gaction.exec('echo', ['hello world']);
+  final process = gaction.exec('echo', ['hello world']);
 
   gaction
     .log
