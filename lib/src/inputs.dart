@@ -12,18 +12,19 @@ class Input {
   const Input(
     this.name, {
     @required this.isRequired,
-    @required this.canBeEmpty,
+    this.canBeEmpty = true,
   });
 
   /// Will throw an [ArgumentError]
   /// if the input is required and the value is null
   /// or if the value is an empty string and [canBeEmpty] is false.
   String get value {
-    final v = Platform
-        .environment['INPUT_${name.toUpperCase().replaceAll(" ", "_")}'];
-    if ((v == null && isRequired) || (v != null && v.isEmpty && !canBeEmpty)) {
+    final key = 'INPUT_${name.toUpperCase().replaceAll(" ", "_")}';
+    final value = Platform.environment[key];
+    if ((value == null && isRequired) ||
+        (value != null && value.isEmpty && !canBeEmpty)) {
       throw ArgumentError('No value was given for the argument \'$name\'.');
     }
-    return v;
+    return value;
   }
 }
