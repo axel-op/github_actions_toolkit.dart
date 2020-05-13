@@ -32,10 +32,15 @@ final _queuedProcesses = Queue();
 /// Processes executed by this command are queued,
 /// and they cannot run in parallel (to preserve consistence in logs).
 /// A process will not start until the previous ones have terminated.
+/// Use [execInParallel] to run a process in parallel.
 ///
 /// By default, the outputs will be printed on the console.
 /// If [silent] is true, nothing will be printed
 /// but the outputs will still be available in [ExecResult].
+///
+/// Use [workDir] to set the working directory for the process.
+/// Note that the change of directory occurs before executing the process on some platforms,
+/// which may have impact when using relative paths for the executable and the arguments.
 ///
 /// Use [environment] to set the environment variables for the process.
 /// If not set the environment of the parent process is inherited.
@@ -59,6 +64,38 @@ Future<ExecResult> exec(
     ),
   );
   return result as ExecResult;
+}
+
+/// Runs a command in a shell,
+/// without waiting for other processes.
+/// Returns a [ExecResult] once the process has terminated.
+///
+/// Processes run by this command are executed immediately.
+/// Nothing will be printed on the console,
+/// but the outputs will still be available in [ExecResult].
+///
+/// Use [workDir] to set the working directory for the process.
+/// Note that the change of directory occurs before executing the process on some platforms,
+/// which may have impact when using relative paths for the executable and the arguments.
+///
+/// Use [environment] to set the environment variables for the process.
+/// If not set the environment of the parent process is inherited.
+/// Currently, only US-ASCII environment variables are supported
+/// and errors are likely to occur if an environment variable with code-points
+/// outside the US-ASCII range is passed in.
+Future<ExecResult> execInParallel(
+  String executable,
+  List<String> arguments, {
+  String workDir,
+  Map<String, String> environment,
+}) async {
+  return _exec(
+    executable,
+    arguments.unmodifiableCopy(),
+    workDir,
+    true,
+    environment?.unmodifiableCopy(),
+  );
 }
 
 Future<ExecResult> _exec(
