@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-
     container: google/dart:2
 
     steps:
@@ -19,3 +18,16 @@ jobs:
           then
             exit 1
           fi
+
+  publishable:
+    runs-on: ubuntu-latest
+    container: google/dart:2
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: pub get
+      - name: Run dartdoc
+        run: dartdoc
+      - name: Test pub publish
+        run: pub publish --dry-run
