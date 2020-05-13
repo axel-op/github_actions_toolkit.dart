@@ -3,6 +3,8 @@
 ## 0.0.3
 
 - The `exec` function can now be unawaited.
+- New function `execInParallel`.
+- More documentation.
 
 ## 0.0.2
 

@@ -42,10 +42,6 @@ final _queuedProcesses = Queue();
 /// Note that the change of directory occurs before executing the process on some platforms,
 /// which may have impact when using relative paths for the executable and the arguments.
 ///
-/// Use [workDir] to set the working directory for the process.
-/// Note that the change of directory occurs before executing the process on some platforms,
-/// which may have impact when using relative paths for the executable and the arguments.
-///
 /// Use [environment] to set the environment variables for the process.
 /// If not set the environment of the parent process is inherited.
 /// Currently, only US-ASCII environment variables are supported
