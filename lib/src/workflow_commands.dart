@@ -1,8 +1,8 @@
 import 'dart:io';
 
+/// Logging commands
 const log = Log._();
 
-/// Logging commands
 class Log {
   const Log._();
 
@@ -135,8 +135,10 @@ void setSecret(String value) => maskValueInLog(value);
 ///
 /// The saved [value] is not available to YAML files.
 /// It is stored as an environment value with the `STATE_` prefix.
-void saveState(String name, String value) =>
-    _echo('save-state', value, {'name': name});
+void saveState(String name, String value) {
+  _echo('save-state', value, {'name': name});
+  Platform.environment['STATE_$name'] = value;
+}
 
 /// Gets the value of a state set using [saveState]
 String getState(String name) => Platform.environment['STATE_$name'];
