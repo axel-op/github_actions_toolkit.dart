@@ -4,6 +4,7 @@
 
 - Rename `workDir` argument by `workingDirectory` for `exec` and `execInParallel` functions.
 - `exec` and `execInParallel` now return a `ProcessResult`.
+- `exec` and `execInParallel` don't block `stdout` and `stderr` StreamConsumers anymore.
 
 ## 0.0.3
 

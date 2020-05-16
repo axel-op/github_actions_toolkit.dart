@@ -25,13 +25,15 @@ void main() async {
 
   logger.startGroup('Echo tests');
 
-  final message = 'This is an echo test';
+  final message = 'This is an awaited echo test';
   unawaited(gaction.execInParallel('sleep', ['5']).then(
     (value) => logger.info('Parallel exec has terminated'),
   ));
   unawaited(gaction.exec('echo', ['This is an unawaited echo test']).then(
     (value) => logger.info('Unawaited echo test has terminated'),
   ));
+  final process = await Process.start('sleep', ['5']);
+  unawaited(stderr.addStream(process.stderr));
   final echoTest = await gaction.exec('echo', [message]);
   logger.info('Awaited echo test:'
       '\n* stdout: [${echoTest.stdout}]'
