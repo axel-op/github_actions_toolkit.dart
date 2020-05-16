@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.4
+
+- Rename `workDir` argument by `workingDirectory` for `exec` and `execInParallel` functions.
+- `exec` and `execInParallel` now return a `ProcessResult`.
+
 ## 0.0.3
 
 - The `exec` function can now be unawaited.

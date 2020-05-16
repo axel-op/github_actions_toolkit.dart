@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:meta/meta.dart';
 import 'package:queue/queue.dart';
 
 extension<K, V> on Map<K, V> {
@@ -12,22 +11,10 @@ extension<T> on List<T> {
   List<T> unmodifiableCopy() => List<T>.unmodifiable(this);
 }
 
-class ExecResult {
-  final int exitCode;
-  final String stderr;
-  final String stdout;
-
-  const ExecResult._({
-    @required this.exitCode,
-    @required this.stderr,
-    @required this.stdout,
-  });
-}
-
 final _queuedProcesses = Queue();
 
 /// Runs a command in a shell.
-/// Returns a [ExecResult] once the process has terminated.
+/// Returns a [ProcessResult] once the process has terminated.
 ///
 /// Processes executed by this command are queued,
 /// and they cannot run in parallel (to preserve consistence in logs).
@@ -36,9 +23,9 @@ final _queuedProcesses = Queue();
 ///
 /// By default, the outputs will be printed on the console.
 /// If [silent] is true, nothing will be printed
-/// but the outputs will still be available in [ExecResult].
+/// but the outputs will still be available in [ProcessResult].
 ///
-/// Use [workDir] to set the working directory for the process.
+/// Use [workingDirectory] to set the working directory for the process.
 /// Note that the change of directory occurs before executing the process on some platforms,
 /// which may have impact when using relative paths for the executable and the arguments.
 ///
@@ -47,10 +34,10 @@ final _queuedProcesses = Queue();
 /// Currently, only US-ASCII environment variables are supported
 /// and errors are likely to occur if an environment variable with code-points
 /// outside the US-ASCII range is passed in.
-Future<ExecResult> exec(
+Future<ProcessResult> exec(
   String executable,
   List<String> arguments, {
-  String workDir,
+  String workingDirectory,
   bool silent = false,
   Map<String, String> environment,
 }) async {
@@ -58,23 +45,23 @@ Future<ExecResult> exec(
     () => _exec(
       executable,
       arguments.unmodifiableCopy(),
-      workDir,
+      workingDirectory,
       silent ?? false,
       environment?.unmodifiableCopy(),
     ),
   );
-  return result as ExecResult;
+  return result as ProcessResult;
 }
 
 /// Runs a command in a shell,
 /// without waiting for other processes.
-/// Returns a [ExecResult] once the process has terminated.
+/// Returns a [ProcessResult] once the process has terminated.
 ///
 /// Processes run by this command are executed immediately.
 /// Nothing will be printed on the console,
-/// but the outputs will still be available in [ExecResult].
+/// but the outputs will still be available in [ProcessResult].
 ///
-/// Use [workDir] to set the working directory for the process.
+/// Use [workingDirectory] to set the working directory for the process.
 /// Note that the change of directory occurs before executing the process on some platforms,
 /// which may have impact when using relative paths for the executable and the arguments.
 ///
@@ -83,22 +70,22 @@ Future<ExecResult> exec(
 /// Currently, only US-ASCII environment variables are supported
 /// and errors are likely to occur if an environment variable with code-points
 /// outside the US-ASCII range is passed in.
-Future<ExecResult> execInParallel(
+Future<ProcessResult> execInParallel(
   String executable,
   List<String> arguments, {
-  String workDir,
+  String workingDirectory,
   Map<String, String> environment,
 }) async {
   return _exec(
     executable,
     arguments.unmodifiableCopy(),
-    workDir,
+    workingDirectory,
     true,
     environment?.unmodifiableCopy(),
   );
 }
 
-Future<ExecResult> _exec(
+Future<ProcessResult> _exec(
   String executable,
   List<String> arguments,
   String workDir,
@@ -123,9 +110,10 @@ Future<ExecResult> _exec(
     ]);
   }
   final exitCode = await process.exitCode;
-  return ExecResult._(
-    exitCode: exitCode,
-    stdout: (await outputStdout)?.join(),
-    stderr: (await outputStderr)?.join(),
+  return ProcessResult(
+    process.pid,
+    exitCode,
+    (await outputStdout)?.join(),
+    (await outputStderr)?.join(),
   );
 }
