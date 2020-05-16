@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   meta: ^1.1.8
-  queue: ">=1.0.1+2 <3.0.0"
+  synchronized: ^2.2.0
 #  path: ^1.6.0
 
 dev_dependencies:

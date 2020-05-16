@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:queue/queue.dart';
+import 'package:synchronized/synchronized.dart';
 
 extension<K, V> on Map<K, V> {
   Map<K, V> unmodifiableCopy() => Map<K, V>.unmodifiable(this);
@@ -11,7 +11,7 @@ extension<T> on List<T> {
   List<T> unmodifiableCopy() => List<T>.unmodifiable(this);
 }
 
-final _queuedProcesses = Queue();
+final _lock = Lock();
 
 /// Runs a command in a shell.
 /// Returns a [ProcessResult] once the process has terminated.
@@ -41,7 +41,7 @@ Future<ProcessResult> exec(
   bool silent = false,
   Map<String, String> environment,
 }) async {
-  final result = await _queuedProcesses.add(
+  return _lock.synchronized(
     () => _exec(
       executable,
       arguments.unmodifiableCopy(),
@@ -50,7 +50,6 @@ Future<ProcessResult> exec(
       environment?.unmodifiableCopy(),
     ),
   );
-  return result as ProcessResult;
 }
 
 /// Runs a command in a shell,
