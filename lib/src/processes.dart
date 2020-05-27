@@ -103,8 +103,8 @@ Future<ProcessResult> _exec(
   final outputStderr = errStream.transform(utf8.decoder).toList();
   final outputStdout = outStream.transform(utf8.decoder).toList();
   if (!silent) {
-    errStream.listen((d) => stderr.flush().then((_) => stderr.add(d)));
-    outStream.listen((d) => stdout.flush().then((_) => stdout.add(d)));
+    errStream.listen(stderr.write);
+    outStream.listen(stdout.write);
   }
   final exitCode = await process.exitCode;
   return ProcessResult(
