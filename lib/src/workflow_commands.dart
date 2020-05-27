@@ -61,9 +61,17 @@ class Log {
   }) =>
       _log('debug', message, file, line, column);
 
+  /// All logs written after you call this function
+  /// will be grouped together,
+  /// until you call [endGroup].
   void startGroup(String name) => _echo('group', name);
   void endGroup() => _echo('endgroup');
 
+  /// All logs written while executing the [function]
+  /// will be grouped together.
+  ///
+  /// The group will be closed after it finishes,
+  /// or in case an exception occurs.
   Future<T> group<T>(String name, Future<T> Function() function) async {
     startGroup(name);
     T result;
