@@ -86,13 +86,19 @@ class Log {
 
 /// Creates or updates an environment variable
 /// for any actions running NEXT in a job.
-/// 
+///
 /// The current action does NOT have access to the new value,
 /// but all subsequent actions in a job will have access.
-/// 
+///
 /// Environment variables are case-sensitive and you can include punctuation.
 void exportVariable(String name, String value) {
-  _echo('set-env', value, {'name': name});
+  value = value.replaceAll('\n', '\\n');
+  final file = Platform.environment['GITHUB_ENV'];
+  if (file != null) {
+    _appendToFile(file, '$name=$value');
+  } else {
+    _echo('set-env', value, {'name': name});
+  }
 }
 
 /// Alias for [exportVariable]
@@ -109,10 +115,15 @@ void setOutput(String name, String value) =>
 
 /// Prepends a directory to the system `PATH` variable
 /// for all subsequent actions in the current job.
-/// 
+///
 /// The current action CANNOT access the new path variable.
 void addPath(String path) {
-  _echo('add-path', path);
+  final file = Platform.environment['GITHUB_PATH'];
+  if (file != null) {
+    _appendToFile(file, path);
+  } else {
+    _echo('add-path', path);
+  }
 }
 
 /// True iff the secret `ACTIONS_STEP_DEBUG` is set with the value `true`
@@ -160,4 +171,12 @@ void _echo(String command, [String message, Map<String, String> parameters]) {
   sb.write('::');
   if (message != null) sb.write(message);
   stdout.writeln(sb.toString());
+}
+
+void _appendToFile(String filePath, String value) {
+  final file = File(filePath);
+  if (!file.existsSync()) {
+    throw Exception('Missing file at path: $file');
+  }
+  file.writeAsStringSync(value + '\n', mode: FileMode.append);
 }
