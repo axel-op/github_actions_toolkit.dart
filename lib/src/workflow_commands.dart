@@ -85,12 +85,14 @@ class Log {
 }
 
 /// Creates or updates an environment variable
-/// for this action AND any actions running next in a job.
-///
+/// for any actions running NEXT in a job.
+/// 
+/// The current action does NOT have access to the new value,
+/// but all subsequent actions in a job will have access.
+/// 
 /// Environment variables are case-sensitive and you can include punctuation.
 void exportVariable(String name, String value) {
   _echo('set-env', value, {'name': name});
-  Platform.environment[name] = value;
 }
 
 /// Alias for [exportVariable]
@@ -106,11 +108,11 @@ void setOutput(String name, String value) =>
     _echo('set-output', value, {'name': name});
 
 /// Prepends a directory to the system `PATH` variable
-/// for this action AND all subsequent actions in the current job.
+/// for all subsequent actions in the current job.
+/// 
+/// The current action CANNOT access the new path variable.
 void addPath(String path) {
   _echo('add-path', path);
-  final currentPath = Platform.environment['PATH'] ?? '';
-  Platform.environment['PATH'] = '$path${Platform.pathSeparator}$currentPath';
 }
 
 /// True iff the secret `ACTIONS_STEP_DEBUG` is set with the value `true`
@@ -145,7 +147,6 @@ void setSecret(String value) => maskValueInLog(value);
 /// It is stored as an environment value with the `STATE_` prefix.
 void saveState(String name, String value) {
   _echo('save-state', value, {'name': name});
-  Platform.environment['STATE_$name'] = value;
 }
 
 /// Gets the value of a state set using [saveState]
