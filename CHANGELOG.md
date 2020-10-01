@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.5
+
+- **Fix**: streamed outputs of processes were incorrectly decoded in UTF-8.
+- **Fix**: the toolkit won't try to edit the environment variables of the current running action.
+- [File commands](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files) have been implemented.
+
 ## 0.0.4
 
 - Rename `workDir` argument by `workingDirectory` for `exec` and `execInParallel` functions.
