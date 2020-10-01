@@ -98,10 +98,10 @@ Future<ProcessResult> _exec(
     workingDirectory: workDir,
     environment: environment,
   );
-  final errStream = process.stderr.asBroadcastStream();
-  final outStream = process.stdout.asBroadcastStream();
-  final outputStderr = errStream.transform(utf8.decoder).toList();
-  final outputStdout = outStream.transform(utf8.decoder).toList();
+  final errStream = process.stderr.asBroadcastStream().transform(utf8.decoder);
+  final outStream = process.stdout.asBroadcastStream().transform(utf8.decoder);
+  final outputStderr = errStream.toList();
+  final outputStdout = outStream.toList();
   if (!silent) {
     errStream.listen(stderr.write);
     outStream.listen(stdout.write);
