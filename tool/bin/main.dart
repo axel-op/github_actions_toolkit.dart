@@ -20,6 +20,8 @@ void main() async {
 
   final time = DateTime.now().toString();
   gaction.setOutput('time', time);
+  gaction.addPath('/doesntexist');
+  gaction.setEnvironmentVariable('TEST_ENV', 'Testvalue');
 
   // Subprocesses
 

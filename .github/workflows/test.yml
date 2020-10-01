@@ -12,10 +12,20 @@ jobs:
       - name: Run test app
         id: dart-app
         uses: ./tool
-      - name: Test outputs
+      - name: Test
         run: |
-          if [ -z "${{ steps.dart-app.outputs.time }}" ]
-          then
+          if [ -z "${{ steps.dart-app.outputs.time }}" ]; then
+            echo "No output"
+            exit 1
+          fi
+          echo "$PATH" | grep -q "/doesntexist"
+          CODE=$?
+          if [ "$CODE" -ne 0 ]; then
+            echo "Path not set"
+            exit 1
+          fi
+          if [ "$TEST_ENV" != "Testvalue" ]; then
+            echo "Environment variable not set"
             exit 1
           fi
 
