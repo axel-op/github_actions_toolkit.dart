@@ -17,8 +17,8 @@ final _lock = Lock();
 /// Returns a [ProcessResult] once the process has terminated.
 ///
 /// Processes executed by this command are queued,
-/// and they cannot run in parallel (to preserve consistence in logs).
-/// A process will not start until the previous ones have terminated.
+/// and they cannot run in parallel (to preserve consistency in logs).
+/// A new process will not start until the previous ones have terminated.
 /// Use [execInParallel] to run a process in parallel.
 ///
 /// By default, the outputs will be printed on the console.
@@ -53,7 +53,7 @@ Future<ProcessResult> exec(
 }
 
 /// Runs a command in a shell,
-/// without waiting for other processes.
+/// without waiting for other processes to complete.
 /// Returns a [ProcessResult] once the process has terminated.
 ///
 /// Processes run by this command are executed immediately.
