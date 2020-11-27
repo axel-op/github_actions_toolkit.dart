@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:github_actions_toolkit/github_actions_toolkit.dart' as gaction;
 
+/*
 extension on String {
   List<String> get lines {
     const ls = LineSplitter();
     return ls.convert(this);
   }
 }
+*/
 
 void main() async {
   exitCode = 0;
@@ -39,20 +41,20 @@ void main() async {
   // Environment
 
   final eventPayload =
-      jsonDecode(gaction.env.eventPayload) as Map<String, dynamic>;
+      jsonDecode(gaction.env.eventPayload!) as Map<String, dynamic>;
   if (eventPayload.containsKey('pull_request')) {
     logger.info('This pull request has been ${eventPayload['action']}');
   }
 
   // Subprocesses
 
-  final analyzerResult = await logger.group(
+  final analyzerResult = await (logger.group(
     'Executing dartanalyzer',
     () async => gaction.exec(
       'dartanalyzer',
-      [gaction.env.workspace.path, '--format', 'machine'],
+      [gaction.env.workspace!.path, '--format', 'machine'],
     ),
-  );
+  ));
 
   if (analyzerResult.exitCode != 0) {
     logger.error('Execution of dartanalyzer has failed');

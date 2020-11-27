@@ -5,12 +5,11 @@ repository: https://github.com/axel-op/github_actions_toolkit.dart
 homepage: https://github.com/axel-op/github_actions_toolkit.dart
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
-  meta: ^1.1.8
-  synchronized: ^2.2.0
+  synchronized: ^3.0.0-nullsafety
 #  path: ^1.6.0
 
 dev_dependencies:
-  pedantic: ^1.8.0
+  pedantic: ^1.10.0-nullsafety

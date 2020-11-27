@@ -37,16 +37,16 @@ final _lock = Lock();
 Future<ProcessResult> exec(
   String executable,
   List<String> arguments, {
-  String workingDirectory,
+  String? workingDirectory,
   bool silent = false,
-  Map<String, String> environment,
+  Map<String, String>? environment,
 }) async {
   return _lock.synchronized(
     () => _exec(
       executable,
       arguments.unmodifiableCopy(),
       workingDirectory,
-      silent ?? false,
+      silent,
       environment?.unmodifiableCopy(),
     ),
   );
@@ -72,8 +72,8 @@ Future<ProcessResult> exec(
 Future<ProcessResult> execInParallel(
   String executable,
   List<String> arguments, {
-  String workingDirectory,
-  Map<String, String> environment,
+  String? workingDirectory,
+  Map<String, String>? environment,
 }) async {
   return _exec(
     executable,
@@ -87,9 +87,9 @@ Future<ProcessResult> execInParallel(
 Future<ProcessResult> _exec(
   String executable,
   List<String> arguments,
-  String workDir,
+  String? workDir,
   bool silent,
-  Map<String, String> environment,
+  Map<String, String>? environment,
 ) async {
   final process = await Process.start(
     executable,
@@ -110,7 +110,7 @@ Future<ProcessResult> _exec(
   return ProcessResult(
     process.pid,
     exitCode,
-    (await outputStdout)?.join(),
-    (await outputStderr)?.join(),
+    (await outputStdout).join(),
+    (await outputStderr).join(),
   );
 }

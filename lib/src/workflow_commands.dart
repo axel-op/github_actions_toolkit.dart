@@ -6,7 +6,7 @@ const log = Log._();
 class Log {
   const Log._();
 
-  Map<String, String> _params(String file, String line, String column) {
+  Map<String, String> _params(String? file, String? line, String? column) {
     final map = <String, String>{};
     if (file != null) map['file'] = file;
     if (line != null) map['line'] = line;
@@ -17,9 +17,9 @@ class Log {
   void _log(
     String command,
     String message,
-    String file,
-    String line,
-    String column,
+    String? file,
+    String? line,
+    String? column,
   ) =>
       _echo(command, message, _params(file, line, column));
 
@@ -30,9 +30,9 @@ class Log {
   /// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
   void error(
     String message, {
-    String file,
-    String line,
-    String column,
+    String? file,
+    String? line,
+    String? column,
   }) =>
       _log('error', message, file, line, column);
 
@@ -41,9 +41,9 @@ class Log {
   /// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
   void warning(
     String message, {
-    String file,
-    String line,
-    String column,
+    String? file,
+    String? line,
+    String? column,
   }) =>
       _log('warning', message, file, line, column);
 
@@ -55,9 +55,9 @@ class Log {
   /// see "[Creating and using encrypted secrets.](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)"
   void debug(
     String message, {
-    String file,
-    String line,
-    String column,
+    String? file,
+    String? line,
+    String? column,
   }) =>
       _log('debug', message, file, line, column);
 
@@ -161,12 +161,12 @@ void saveState(String name, String value) {
 }
 
 /// Gets the value of a state set using [saveState]
-String getState(String name) => Platform.environment['STATE_$name'];
+String? getState(String name) => Platform.environment['STATE_$name'];
 
-void _echo(String command, [String message, Map<String, String> parameters]) {
+void _echo(String command, [String? message, Map<String, String>? parameters]) {
   final sb = StringBuffer('::$command');
   final params =
-      parameters?.entries?.map((e) => '${e.key}=${e.value}')?.join(',');
+      parameters?.entries.map((e) => '${e.key}=${e.value}').join(',');
   if (params != null && params.isNotEmpty) sb.write(' $params');
   sb.write('::');
   if (message != null) sb.write(message);

@@ -1,14 +1,16 @@
-import 'dart:convert';
+//import 'dart:convert';
 import 'dart:io';
 
 import 'package:github_actions_toolkit/github_actions_toolkit.dart' as gaction;
 
+/*
 extension on String {
   List<String> get lines {
     const ls = LineSplitter();
     return ls.convert(this);
   }
 }
+*/
 
 void unawaited(Future future) {}
 
