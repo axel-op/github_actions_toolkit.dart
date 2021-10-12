@@ -11,5 +11,5 @@ dependencies:
   synchronized: ^3.0.0-nullsafety
 #  path: ^1.6.0
 
-dev_dependencies:
-  pedantic: ^1.10.0-nullsafety
+dev_dependencies: 
+  lints: ^1.0.1
