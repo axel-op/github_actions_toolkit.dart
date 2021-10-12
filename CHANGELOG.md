@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6
+
+- Null-safety migration
+
 ## 0.0.5
 
 - **Fix**: streamed outputs of processes were incorrectly decoded in UTF-8.
