@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: google/dart:beta
+    container: dart:stable
 
     steps:
       - uses: actions/checkout@v2
@@ -31,13 +31,13 @@ jobs:
 
   publishable:
     runs-on: ubuntu-latest
-    container: google/dart:beta
+    container: dart:stable
 
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: pub get
+        run: dart pub get
       - name: Run dartdoc
         run: dartdoc
       - name: Test pub publish
-        run: pub publish --dry-run
+        run: dart pub publish --dry-run
