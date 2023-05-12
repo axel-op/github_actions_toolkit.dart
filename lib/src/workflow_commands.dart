@@ -1,7 +1,15 @@
 import 'dart:io';
 
+import 'package:uuid/uuid.dart';
+
 /// Logging commands
 const log = Log._();
+const _uuid = Uuid();
+final _eol = () {
+  if (Platform.isWindows) return '\r\n';
+  if (Platform.isMacOS) return '\r';
+  return '\n';
+}();
 
 class Log {
   const Log._();
@@ -95,7 +103,7 @@ void exportVariable(String name, String value) {
   value = value.replaceAll('\n', '\\n');
   final file = Platform.environment['GITHUB_ENV'];
   if (file != null) {
-    _appendToFile(file, '$name=$value');
+    _appendToFile(file, _prepareKeyValueMessage(name, value));
   } else {
     _echo('set-env', value, {'name': name});
   }
@@ -113,7 +121,7 @@ void setEnvironmentVariable(String name, String value) =>
 void setOutput(String name, String value) {
   final file = Platform.environment['GITHUB_OUTPUT'];
   if (file != null) {
-    _appendToFile(file, '$name=$value');
+    _appendToFile(file, _prepareKeyValueMessage(name, value));
   } else {
     _echo('set-output', value, {'name': name});
   }
@@ -184,5 +192,15 @@ void _appendToFile(String filePath, String value) {
   if (!file.existsSync()) {
     throw Exception('Missing file at path: $file');
   }
-  file.writeAsStringSync(value + '\n', mode: FileMode.append);
+  file.writeAsStringSync('$value$_eol', mode: FileMode.append);
+}
+
+String _prepareKeyValueMessage(String key, String value) {
+  final delimiter = 'ghadelimiter_${_uuid.v4()}';
+  if (key.contains(delimiter) || value.contains(delimiter)) {
+    throw Exception(
+      'Neither the key nor the value of a command should contain the delimiter',
+    );
+  }
+  return '$key<<$delimiter$_eol$value$_eol$delimiter';
 }
