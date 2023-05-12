@@ -3,6 +3,7 @@
 ## 0.0.7
 
 - An environment file is now used [to set outputs](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter).
+- Dart SDK upper-bound is now set to 4.0.0.
 
 ## 0.0.6
 
