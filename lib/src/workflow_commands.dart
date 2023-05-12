@@ -110,8 +110,14 @@ void setEnvironmentVariable(String name, String value) =>
 /// Optionally, you can also declare output parameters in an action's metadata file.
 /// For more information,
 /// see "[Metadata syntax for GitHub Actions.](https://help.github.com/en/articles/metadata-syntax-for-github-actions#outputs)"
-void setOutput(String name, String value) =>
+void setOutput(String name, String value) {
+  final file = Platform.environment['GITHUB_OUTPUT'];
+  if (file != null) {
+    _appendToFile(file, '$name=$value');
+  } else {
     _echo('set-output', value, {'name': name});
+  }
+}
 
 /// Prepends a directory to the system `PATH` variable
 /// for all subsequent actions in the current job.
