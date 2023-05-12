@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.8
+
+- Support for multiline outputs and environment variables
+
 ## 0.0.7
 
 - An environment file is now used [to set outputs](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter).
