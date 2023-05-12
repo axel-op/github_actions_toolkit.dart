@@ -8,7 +8,7 @@ jobs:
     container: dart:stable
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run test app
         id: dart-app
         uses: ./tool
@@ -34,10 +34,10 @@ jobs:
     container: dart:stable
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: dart pub get
-      - name: Run dartdoc
-        run: dartdoc
+      - name: Run dart doc
+        run: dart doc
       - name: Test pub publish
         run: dart pub publish --dry-run
