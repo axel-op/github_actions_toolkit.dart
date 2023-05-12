@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7
+
+- An environment file is now used [to set outputs](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter).
+
 ## 0.0.6
 
 - Null-safety migration
@@ -8,7 +12,7 @@
 
 - **Fix**: streamed outputs of processes were incorrectly decoded in UTF-8.
 - **Fix**: the toolkit won't try to edit the environment variables of the current running action.
-- [File commands](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files) have been implemented.
+- [File commands](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actioilens#environment-files) have been implemented.
 
 ## 0.0.4
 
